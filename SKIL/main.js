@@ -64,7 +64,6 @@ function updateCartDisplay() {
 
 
 
-// interaction observer //
 let observer = new IntersectionObserver(
   function(entries) {
     if (entries[0].isIntersecting === true) {
@@ -80,3 +79,71 @@ let observer = new IntersectionObserver(
 );
 
 observer.observe(document.getElementsByTagName("main")[0]);
+
+
+let canLoadMore = true;
+
+window.addEventListener('scroll', () => {
+  if (canLoadMore && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 2) {
+    canLoadMore = false;
+
+    const newItems = [
+      ["potion of water", "99$", "imgs/potion_1.jpg", "⭐⭐⭐⭐⭐", true],
+      ["potion of greed", "150$", "imgs/potion_2.png", "⭐⭐⭐⭐", true],
+      ["Potion of lava", "130$", "imgs/potion_3.png", "⭐⭐⭐", true],
+    ];
+    newItems.forEach(item => items.push(item));
+
+
+    newItems.forEach(item => {
+      const [name, price, imgSrc, stars, available] = item;
+      if (available) {
+        productContainer.innerHTML += `
+          <section class="product1__section">
+            <figure class="product1__img">
+              <img src="${imgSrc}" alt="" width="300rem" height="300rem">
+            </figure>
+            <h2>${price}</h2>
+            <h2>${name}</h2>
+            <h2>${stars}</h2>
+            <div>
+              <button class="product__button">Add to cart</button>
+              <button class="product__removebutton">-</button>
+            </div>
+          </section>
+        `;
+      }
+    });
+
+  
+    const addButtons = document.querySelectorAll('.product__button');
+    const removeButtons = document.querySelectorAll('.product__removebutton');
+
+    addButtons.forEach(button => {
+      if (!button.dataset.listener) {
+        button.addEventListener('click', () => {
+          cartCount++;
+          updateCartDisplay();
+        });
+        button.dataset.listener = "true";
+      }
+    });
+
+    removeButtons.forEach(button => {
+      if (!button.dataset.listener) {
+        button.addEventListener('click', () => {
+          if (cartCount > 0) {
+            cartCount--;
+            updateCartDisplay();
+          }
+        });
+        button.dataset.listener = "true";
+      }
+    });
+
+    
+    setTimeout(() => {
+      canLoadMore = true;
+    }, 500);
+  }
+});
